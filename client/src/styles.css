@@ -1,0 +1,461 @@
+/* ==================================================================
+   Premium theme for the Password Reset app.
+   Pure CSS + Bootstrap only (no extra libraries).
+
+   Design language:
+   - Deep "aurora" animated gradient backdrop with floating orbs + grain
+   - Frosted glass card with an animated conic glow border
+   - Plus Jakarta Sans display type, Inter for body
+   - Tactile micro-interactions on inputs and buttons
+================================================================== */
+
+:root {
+  --brand: #6366f1;
+  --brand-2: #8b5cf6;
+  --brand-3: #ec4899;
+  --brand-dark: #4338ca;
+  --ink: #0f172a;
+  --ink-soft: #64748b;
+  --card: rgba(255, 255, 255, 0.72);
+  --ring: rgba(99, 102, 241, 0.35);
+  --radius: 24px;
+  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--ink);
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #0b0a1a;
+}
+
+/* ---- Aurora gradient backdrop ---- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -3;
+  background:
+    radial-gradient(40% 50% at 20% 30%, #6d5efc 0%, transparent 60%),
+    radial-gradient(45% 55% at 80% 20%, #c026d3 0%, transparent 60%),
+    radial-gradient(50% 60% at 60% 85%, #ec4899 0%, transparent 60%),
+    radial-gradient(40% 50% at 15% 80%, #4f46e5 0%, transparent 60%),
+    linear-gradient(135deg, #1e1b4b, #0b0a1a);
+  background-size: 200% 200%;
+  filter: saturate(1.1);
+  animation: auroraShift 20s ease-in-out infinite;
+}
+
+@keyframes auroraShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ---- Subtle film grain for a richer, less flat look ---- */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  opacity: 0.05;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- Floating orbs ---- */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.5;
+  z-index: -1;
+  pointer-events: none;
+  animation: float 14s ease-in-out infinite;
+}
+.blob-1 {
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, #818cf8, transparent 70%);
+  top: -100px;
+  left: -90px;
+}
+.blob-2 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, #f472b6, transparent 70%);
+  bottom: -90px;
+  right: -80px;
+  animation-delay: 4s;
+}
+.blob-3 {
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, #22d3ee, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.25;
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+  50% { transform: translateY(-40px) translateX(24px) scale(1.05); }
+}
+
+/* ---- Glass card with animated glow border ---- */
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+  padding: 44px 40px;
+  border-radius: var(--radius);
+  background: var(--card);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 30px 60px -15px rgba(15, 23, 42, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  animation: cardIn 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Rotating conic gradient ring around the card */
+.auth-card::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: calc(var(--radius) + 1.5px);
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 0deg,
+    var(--brand) 90deg,
+    var(--brand-3) 180deg,
+    var(--brand-2) 270deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.7;
+  animation: spinBorder 6s linear infinite;
+}
+
+/* Animate the custom property for the conic gradient angle */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes spinBorder {
+  to { --angle: 360deg; }
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.96); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+/* Staggered entrance for inner elements */
+.auth-card > * {
+  animation: rise 0.6s both;
+}
+.auth-card > *:nth-child(1) { animation-delay: 0.05s; }
+.auth-card > *:nth-child(2) { animation-delay: 0.12s; }
+.auth-card > *:nth-child(3) { animation-delay: 0.19s; }
+.auth-card > *:nth-child(4) { animation-delay: 0.26s; }
+.auth-card > *:nth-child(5) { animation-delay: 0.33s; }
+.auth-card > *:nth-child(6) { animation-delay: 0.40s; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Icon badge ---- */
+.icon-badge {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand-2), var(--brand-dark));
+  box-shadow:
+    0 14px 30px -6px rgba(99, 102, 241, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  animation: badgeFloat 4s ease-in-out infinite;
+}
+.icon-badge svg {
+  width: 34px;
+  height: 34px;
+}
+/* Soft glowing halo behind the badge */
+.icon-badge::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 26px;
+  background: inherit;
+  filter: blur(16px);
+  opacity: 0.55;
+  z-index: -1;
+}
+@keyframes badgeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ---- Typography ---- */
+.auth-title {
+  font-family: var(--font-display);
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.7rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.auth-subtitle {
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.96rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.form-label {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #334155;
+  text-transform: uppercase;
+}
+
+/* ---- Inputs ---- */
+.form-control {
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 0.98rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid rgba(148, 163, 184, 0.35);
+  transition: border-color 0.2s, box-shadow 0.25s, background 0.2s, transform 0.1s;
+}
+.form-control::placeholder { color: #94a3b8; }
+.form-control:focus {
+  background: #fff;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 5px var(--ring);
+  outline: none;
+}
+
+/* ---- Primary button ---- */
+.btn-brand {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 15px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 50%, var(--brand-3) 100%);
+  background-size: 200% 200%;
+  box-shadow: 0 12px 26px -8px rgba(99, 102, 241, 0.7);
+  transition: transform 0.15s ease, box-shadow 0.25s ease, background-position 0.6s ease;
+}
+.btn-brand:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background-position: 100% 50%;
+  box-shadow: 0 18px 34px -8px rgba(236, 72, 153, 0.55);
+  color: #fff;
+}
+.btn-brand:active:not(:disabled) { transform: translateY(0) scale(0.99); }
+.btn-brand:disabled { opacity: 0.65; cursor: not-allowed; }
+.btn-brand::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-20deg);
+}
+.btn-brand:hover:not(:disabled)::after { animation: shine 0.85s ease; }
+@keyframes shine {
+  to { left: 140%; }
+}
+
+/* ---- Password strength meter ---- */
+.strength-track {
+  height: 7px;
+  border-radius: 6px;
+  background: rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+  margin-top: 10px;
+}
+.strength-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 6px;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease;
+}
+.strength-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+/* ---- Show/hide password toggle ---- */
+.toggle-eye {
+  border: 1.5px solid rgba(148, 163, 184, 0.35);
+  border-left: none;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0 14px 14px 0;
+  padding: 0 16px;
+  color: var(--ink-soft);
+  transition: color 0.2s, background 0.2s;
+}
+.toggle-eye:hover { color: var(--brand); background: #fff; }
+
+/* ---- Alerts ---- */
+.alert {
+  border-radius: 14px;
+  border: none;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: alertIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.alert-danger {
+  background: rgba(254, 226, 226, 0.85);
+  color: #b91c1c;
+}
+.alert svg { width: 18px; height: 18px; flex-shrink: 0; }
+@keyframes alertIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- Success / status circle ---- */
+.success-circle {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  color: #059669;
+  animation: popIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.success-circle svg { width: 44px; height: 44px; }
+.success-circle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  opacity: 0.5;
+  animation: ring 1.6s ease-out infinite;
+}
+@keyframes ring {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+@keyframes popIn {
+  0% { transform: scale(0) rotate(-20deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* ---- Spinner inside buttons ---- */
+.btn-spinner {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-width: 0.18em;
+}
+
+/* ---- Links + hint box ---- */
+.link-muted {
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 600;
+}
+.link-muted:hover { text-decoration: underline; }
+
+.hint-box {
+  background: rgba(248, 250, 252, 0.7);
+  border: 1px dashed rgba(148, 163, 184, 0.5);
+  border-radius: 14px;
+  padding: 13px 15px;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  margin-top: 24px;
+}
+.hint-box code {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--brand-dark);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+}
+
+/* ---- Brand footer line ---- */
+.brand-footer {
+  text-align: center;
+  margin-top: 26px;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.75);
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Reduced motion: respect user preference ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---- Small screens ---- */
+@media (max-width: 480px) {
+  .auth-card { padding: 34px 24px; }
+  .auth-title { font-size: 1.45rem; }
+}
