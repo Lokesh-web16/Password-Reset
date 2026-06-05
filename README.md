@@ -3,7 +3,7 @@
 <img src="https://readme-typing-svg.demolab.com/?font=Plus+Jakarta+Sans&weight=800&size=34&duration=3000&pause=800&color=8B5CF6&center=true&vCenter=true&width=620&height=70&lines=Password+Reset+Flow;Secure+%E2%80%A2+Animated+%E2%80%A2+Production-Ready" alt="Password Reset Flow" />
 
 <p>
-  <em>A polished, secure password reset experience &mdash; email verification, expiring single-use tokens, and a premium animated UI.</em>
+  <em>A polished, secure password reset experience &mdash; email verification, expiring single-use tokens and a premium animated UI.</em>
 </p>
 
 <p>
@@ -207,33 +207,8 @@ curl -X POST http://localhost:5001/api/auth/reset-password/<TOKEN> \
 
 </details>
 
----
 
-## ☁️ Deployment
 
-<table>
-  <tr>
-    <td width="50%" valign="top">
-
-### Server → Render
-1. Create a **Blueprint** from `server/render.yaml`.
-2. Set `MONGO_URI`, `CLIENT_URL` (your Netlify URL), and the `SMTP_*` vars.
-3. Deploy. Your API lives at `https://<name>.onrender.com`.
-
-  </td>
-  <td width="50%" valign="top">
-
-### Client → Netlify
-1. Point Netlify at the `client/` folder.
-2. `netlify.toml` sets the build command, publish dir, and SPA redirect.
-3. Set `VITE_API_URL` to your Render URL.
-
-  </td>
-  </tr>
-</table>
-
-> ⚠️ After deploying, set the server's `CLIENT_URL` to your **live Netlify URL**
-> so the link in the email points at the deployed site instead of `localhost`.
 
 ---
 
