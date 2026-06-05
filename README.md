@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com/?font=Plus+Jakarta+Sans&weight=800&size=34&duration=3000&pause=800&color=8B5CF6&center=true&vCenter=true&width=620&height=70&lines=Password+Reset+Flow;Secure+%E2%80%A2+Animated+%E2%80%A2+Production-Ready" alt="Password Reset Flow" />
+<img src="https://readme-typing-svg.demolab.com/?font=Plus+Jakarta+Sans&weight=800&size=34&duration=3000&pause=800&color=8B5CF6&center=true&vCenter=true&width=620&height=70&lines=Password+Reset+Flow;Secure+%E2%80%A2+Production-Ready" alt="Password Reset Flow" />
 
 <p>
   <em>A polished, secure password reset experience &mdash; email verification, expiring single-use tokens and a premium animated UI.</em>
