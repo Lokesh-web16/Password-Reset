@@ -12,6 +12,14 @@ import authRoutes from "./routes/authRoutes.js";
 export const createApp = () => {
   const app = express();
 
+  // Render (and most hosts) put the app behind a reverse proxy, so the real
+  // client IP arrives in the X-Forwarded-For header. Trusting the first proxy
+  // hop lets express-rate-limit identify users correctly. Only enabled outside
+  // of tests, where there is no proxy.
+  if (process.env.NODE_ENV !== "test") {
+    app.set("trust proxy", 1);
+  }
+
   // --- Core middleware ---
   app.use(express.json());
   app.use(
