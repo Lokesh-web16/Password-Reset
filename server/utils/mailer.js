@@ -39,14 +39,23 @@ const getTransporter = async () => {
   }
 
   if (hasRealSmtp()) {
+    const port = Number(process.env.SMTP_PORT) || 587;
     cachedTransporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_SECURE === "true", // true for 465, false for 587
+      port,
+      // Port 465 requires an implicit TLS connection (secure=true). Port 587
+      // upgrades via STARTTLS (secure=false). Derive this from the port so a
+      // misconfigured SMTP_SECURE flag cannot break the connection.
+      secure: process.env.SMTP_SECURE === "true" || port === 465,
       auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        // Strip any spaces from the app password — Gmail shows it in groups of
+        // four (e.g. "abcd efgh ijkl mnop") and pasted spaces cause auth fails.
+        pass: process.env.SMTP_PASS.replace(/\s+/g, ""),
       },
+      // Fail fast instead of hanging if the host blocks outbound SMTP.
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
     });
     usingTestAccount = false;
   } else {

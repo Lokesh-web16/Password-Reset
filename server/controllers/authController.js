@@ -48,7 +48,13 @@ export const forgotPassword = async (req, res) => {
       user.resetToken = null;
       user.resetTokenExpiry = null;
       await user.save();
-      console.error("Email send error:", mailError.message);
+      // Log full details (code + response) so SMTP issues are diagnosable.
+      console.error("Email send error:", {
+        message: mailError.message,
+        code: mailError.code,
+        command: mailError.command,
+        response: mailError.response,
+      });
       return res
         .status(502)
         .json({ message: "Could not send the reset email. Please try again." });
