@@ -149,6 +149,61 @@ export const resetPassword = async (req, res) => {
 };
 
 /**
+ * POST /api/auth/register
+ *
+ * Creates a new user account from the Register page. The task requires a
+ * Register flow (but NOT a Login flow) so that a freshly registered user can
+ * then exercise the Forgot Password flow. Passwords are hashed with bcrypt.
+ */
+export const register = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required." });
+    }
+
+    // Basic email format check.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res
+        .status(400)
+        .json({ message: "Please enter a valid email address." });
+    }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters long." });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const existing = await User.findOne({ email: normalizedEmail });
+    if (existing) {
+      return res
+        .status(409)
+        .json({ message: "An account with this email already exists." });
+    }
+
+    const user = await User.create({
+      name: name ? name.trim() : "",
+      email: normalizedEmail,
+      password: await bcrypt.hash(password, 10),
+    });
+
+    return res.status(201).json({
+      message: "Account created successfully. You can now reset its password.",
+      email: user.email,
+    });
+  } catch (error) {
+    console.error("register error:", error.message);
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+/**
  * POST /api/auth/seed
  *
  * Convenience endpoint to create a demo user so the flow can be tested without

@@ -7,6 +7,7 @@ import "./styles.css";
 
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import Register from "./pages/Register.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -17,10 +18,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <div className="blob blob-3" />
 
       <Routes>
-        <Route path="/" element={<ForgotPassword />} />
+        <Route path="/" element={<Register />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        {/* Any unknown path falls back to the forgot-password page */}
+        {/* Any unknown path falls back to the register page */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

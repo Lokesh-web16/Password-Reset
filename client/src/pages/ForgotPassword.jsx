@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { requestPasswordReset } from "../api.js";
 import { MailIcon, CheckIcon, AlertIcon } from "../components/Icons.jsx";
 
@@ -115,6 +116,13 @@ export default function ForgotPassword() {
             )}
           </button>
         </form>
+
+        <p className="text-center mt-4 mb-0" style={{ fontSize: "0.9rem" }}>
+          Don&apos;t have an account?{" "}
+          <Link to="/register" className="link-muted">
+            Register
+          </Link>
+        </p>
       </div>
       <p className="brand-footer">Secured password recovery</p>
     </>

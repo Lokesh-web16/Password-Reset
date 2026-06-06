@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  register,
   forgotPassword,
   verifyResetToken,
   resetPassword,
@@ -7,6 +8,9 @@ import {
 } from "../controllers/authController.js";
 
 const router = express.Router();
+
+// Create a new account (Register page). No Login flow by design.
+router.post("/register", register);
 
 // Request a reset link.
 router.post("/forgot-password", forgotPassword);

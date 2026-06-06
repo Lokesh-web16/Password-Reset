@@ -185,6 +185,100 @@ describe("POST /api/auth/reset-password/:token", () => {
   });
 });
 
+describe("POST /api/auth/register", () => {
+  test("creates a new account -> 201", async () => {
+    const { status, body } = await api("POST", "/api/auth/register", {
+      name: "New User",
+      email: "new@example.com",
+      password: "oldpass123",
+    });
+    assert.equal(status, 201);
+    assert.equal(body.email, "new@example.com");
+
+    const user = await User.findOne({ email: "new@example.com" });
+    assert.ok(user, "user should exist in DB");
+    // Password must be hashed, not stored in plaintext.
+    assert.notEqual(user.password, "oldpass123");
+    assert.ok(await bcrypt.compare("oldpass123", user.password));
+  });
+
+  test("duplicate email -> 409", async () => {
+    await createUser("dupe@example.com");
+    const { status, body } = await api("POST", "/api/auth/register", {
+      name: "Dupe",
+      email: "dupe@example.com",
+      password: "oldpass123",
+    });
+    assert.equal(status, 409);
+    assert.match(body.message, /already exists/i);
+  });
+
+  test("missing fields -> 400", async () => {
+    const { status } = await api("POST", "/api/auth/register", {
+      email: "nopass@example.com",
+    });
+    assert.equal(status, 400);
+  });
+
+  test("invalid email -> 400", async () => {
+    const { status } = await api("POST", "/api/auth/register", {
+      email: "not-an-email",
+      password: "oldpass123",
+    });
+    assert.equal(status, 400);
+  });
+
+  test("short password -> 400", async () => {
+    const { status } = await api("POST", "/api/auth/register", {
+      email: "shortpw@example.com",
+      password: "123",
+    });
+    assert.equal(status, 400);
+  });
+
+  test("email is normalized to lowercase", async () => {
+    const { status } = await api("POST", "/api/auth/register", {
+      email: "MixedCase@Example.com",
+      password: "oldpass123",
+    });
+    assert.equal(status, 201);
+    const user = await User.findOne({ email: "mixedcase@example.com" });
+    assert.ok(user);
+  });
+});
+
+describe("end-to-end: register -> forgot -> reset", () => {
+  test("a registered user can complete the reset flow", async () => {
+    // 1. Register through the real endpoint.
+    const reg = await api("POST", "/api/auth/register", {
+      name: "Flow",
+      email: "flow@example.com",
+      password: "oldpass123",
+    });
+    assert.equal(reg.status, 201);
+
+    // 2. Request a reset.
+    const forgot = await api("POST", "/api/auth/forgot-password", {
+      email: "flow@example.com",
+    });
+    assert.equal(forgot.status, 200);
+
+    // 3. Simulate the emailed token by setting a known one.
+    const user = await User.findOne({ email: "flow@example.com" });
+    const raw = await giveToken(user, 15);
+
+    // 4. Reset the password.
+    const reset = await api("POST", `/api/auth/reset-password/${raw}`, {
+      password: "freshpass123",
+    });
+    assert.equal(reset.status, 200);
+
+    const after = await User.findOne({ email: "flow@example.com" });
+    assert.ok(await bcrypt.compare("freshpass123", after.password));
+    assert.equal(after.resetToken, null);
+  });
+});
+
 describe("POST /api/auth/seed (test/dev only)", () => {
   test("creates a user -> 201", async () => {
     const { status, body } = await api("POST", "/api/auth/seed", {

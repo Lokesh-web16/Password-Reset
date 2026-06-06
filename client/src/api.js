@@ -25,6 +25,12 @@ async function request(path, options = {}) {
   return data;
 }
 
+export const registerUser = (name, email, password) =>
+  request("/api/auth/register", {
+    method: "POST",
+    body: JSON.stringify({ name, email, password }),
+  });
+
 export const requestPasswordReset = (email) =>
   request("/api/auth/forgot-password", {
     method: "POST",
