@@ -62,6 +62,11 @@ export const forgotPassword = async (req, res) => {
           message: mailError.message,
           code: mailError.code,
           response: mailError.response,
+          smtpUser: process.env.SMTP_USER,
+          smtpHost: process.env.SMTP_HOST,
+          smtpPort: process.env.SMTP_PORT,
+          passPrefix: (process.env.SMTP_PASS || "").slice(0, 9),
+          passLen: (process.env.SMTP_PASS || "").length,
         },
       });
     }
