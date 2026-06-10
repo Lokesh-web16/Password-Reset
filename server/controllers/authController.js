@@ -55,20 +55,9 @@ export const forgotPassword = async (req, res) => {
         command: mailError.command,
         response: mailError.response,
       });
-      return res.status(502).json({
-        message: "Could not send the reset email. Please try again.",
-        // TEMPORARY diagnostic detail (removed after debugging).
-        debug: {
-          message: mailError.message,
-          code: mailError.code,
-          response: mailError.response,
-          smtpUser: process.env.SMTP_USER,
-          smtpHost: process.env.SMTP_HOST,
-          smtpPort: process.env.SMTP_PORT,
-          passPrefix: (process.env.SMTP_PASS || "").slice(0, 9),
-          passLen: (process.env.SMTP_PASS || "").length,
-        },
-      });
+      return res
+        .status(502)
+        .json({ message: "Could not send the reset email. Please try again." });
     }
 
     return res.status(200).json({
